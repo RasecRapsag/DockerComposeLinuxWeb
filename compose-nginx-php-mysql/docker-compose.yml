@@ -1,0 +1,37 @@
+version: '3.4'
+
+services:
+  web:
+    image: nginx:latest
+    container_name: web
+    depends_on:
+      - php
+    ports:
+      - "8000:80"
+    volumes:
+      - ./www:/var/www/html
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+  php:
+    image: php:7.2-fpm
+    container_name: php
+    volumes:
+      - ./www:/var/www/html
+  db:
+    image: mysql:5.7
+    container_name: db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: mysql
+    volumes:
+      - ./data:/var/lib/mysql
+  admin:
+    image: phpmyadmin/phpmyadmin
+    container_name: admin
+    depends_on:
+      - db
+    environment:
+      - PMA_HOST = db
+    ports:
+      - 8080:80
